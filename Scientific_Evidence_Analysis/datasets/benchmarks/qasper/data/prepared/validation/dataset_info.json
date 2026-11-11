@@ -1,0 +1,175 @@
+{
+  "builder_name": "parquet",
+  "citation": "",
+  "config_name": "default",
+  "dataset_name": "parquet",
+  "dataset_size": 53855530,
+  "description": "",
+  "download_checksums": {
+    "C:/Users/USER/Desktop/Final project/Scientific_Evidence_Analysis/datasets/benchmarks/qasper/data/raw/test-0000.parquet": {
+      "num_bytes": 7074873,
+      "checksum": null
+    },
+    "C:/Users/USER/Desktop/Final project/Scientific_Evidence_Analysis/datasets/benchmarks/qasper/data/raw/train-0000.parquet": {
+      "num_bytes": 14374550,
+      "checksum": null
+    },
+    "C:/Users/USER/Desktop/Final project/Scientific_Evidence_Analysis/datasets/benchmarks/qasper/data/raw/validation-0000.parquet": {
+      "num_bytes": 4749127,
+      "checksum": null
+    }
+  },
+  "download_size": 26198550,
+  "features": {
+    "id": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "title": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "abstract": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "full_text": {
+      "feature": {
+        "section_name": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "paragraphs": [
+          {
+            "dtype": "string",
+            "_type": "Value"
+          }
+        ]
+      },
+      "_type": "Sequence"
+    },
+    "qas": {
+      "feature": {
+        "question": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "question_id": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "nlp_background": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "topic_background": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "paper_read": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "search_query": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "question_writer": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "answers": {
+          "feature": {
+            "answer": {
+              "unanswerable": {
+                "dtype": "bool",
+                "_type": "Value"
+              },
+              "extractive_spans": {
+                "feature": {
+                  "dtype": "string",
+                  "_type": "Value"
+                },
+                "_type": "Sequence"
+              },
+              "yes_no": {
+                "dtype": "bool",
+                "_type": "Value"
+              },
+              "free_form_answer": {
+                "dtype": "string",
+                "_type": "Value"
+              },
+              "evidence": {
+                "feature": {
+                  "dtype": "string",
+                  "_type": "Value"
+                },
+                "_type": "Sequence"
+              },
+              "highlighted_evidence": {
+                "feature": {
+                  "dtype": "string",
+                  "_type": "Value"
+                },
+                "_type": "Sequence"
+              }
+            },
+            "annotation_id": {
+              "dtype": "string",
+              "_type": "Value"
+            },
+            "worker_id": {
+              "dtype": "string",
+              "_type": "Value"
+            }
+          },
+          "_type": "Sequence"
+        }
+      },
+      "_type": "Sequence"
+    },
+    "figures_and_tables": {
+      "feature": {
+        "caption": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "file": {
+          "dtype": "string",
+          "_type": "Value"
+        }
+      },
+      "_type": "Sequence"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 80054080,
+  "splits": {
+    "test": {
+      "name": "test",
+      "num_bytes": 15488891,
+      "num_examples": 416,
+      "dataset_name": "parquet"
+    },
+    "train": {
+      "name": "train",
+      "num_bytes": 28466446,
+      "num_examples": 888,
+      "dataset_name": "parquet"
+    },
+    "validation": {
+      "name": "validation",
+      "num_bytes": 9900193,
+      "num_examples": 281,
+      "dataset_name": "parquet"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}

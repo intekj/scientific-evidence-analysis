@@ -1,0 +1,49 @@
+flowchart LR
+  B12_001[["B12-001: Automated factuality evaluation vs human judgment"]]
+  B12_002[["B12-002: Automated RAG evaluation frameworks: ARES vs Ragas"]]
+  B12_003[["B12-003: Model scaling and factuality / hallucination evaluation"]]
+  B12_004[["B12-004: Prompt difficulty, entity familiarity and hallucination"]]
+  B12_005[["B12-005: Scientific QA benchmarks measure different grounding capabilities"]]
+  B12_006[["B12-006: OpenScholar vs QASPER: scientific QA performance"]]
+  B12_007[["B12-007: Retrieval strategy performance depends on task and corpus"]]
+  B12_008[["B12-008: Robustness to noisy and counterfactual retrieved context"]]
+  B12_009[["B12-009: General AI scientific claim verification vs clinical transfer"]]
+  B12_010[["B12-010: Inter-annotator agreement across evidence annotation tasks"]]
+  P006[("P006: FactBench: A Dynamic Benchmark for In-the-Wild Langu")]
+  P007[("P007: Evaluating Evaluation Metrics – The Mirage of Halluc")]
+  P010[("P010: Does Finetuning with Scientific Data Increase Halluc")]
+  P012[("P012: Long-form factuality in large language models")]
+  P016[("P016: ARES: An Automated Evaluation Framework for Retrieva")]
+  P018[("P018: Ragas: Automated Evaluation of Retrieval Augmented G")]
+  P005[("P005: The Dawn After the Dark: An Empirical Study on Factu")]
+  P008[("P008: Can AI Validate Science? Benchmarking LLMs on Claim ")]
+  P011[("P011: LitTraceQA: A Benchmark for Multi-Stage Grounding an")]
+  P020[("P020: A Dataset of Information-Seeking Questions and Answe")]
+  P014[("P014: Synthesizing scientific literature with retrieval-au")]
+  P009[("P009: T2-RAGBench: Text-and-Table Benchmark for Evaluating")]
+  P017[("P017: Corrective Retrieval Augmented Generation")]
+  P015[("P015: Benchmarking Large Language Models in Retrieval-Augm")]
+  P021[("P021: Retrieval augmented scientific claim verification")]
+  B12_001 --> P006
+  B12_001 --> P007
+  B12_001 --> P010
+  B12_001 --> P012
+  B12_002 --> P016
+  B12_002 --> P018
+  B12_003 --> P006
+  B12_003 --> P007
+  B12_004 --> P005
+  B12_004 --> P006
+  B12_005 --> P008
+  B12_005 --> P011
+  B12_005 --> P020
+  B12_006 --> P014
+  B12_006 --> P020
+  B12_007 --> P009
+  B12_007 --> P017
+  B12_008 --> P015
+  B12_008 --> P009
+  B12_009 --> P008
+  B12_009 --> P021
+  B12_010 --> P008
+  B12_010 --> P010

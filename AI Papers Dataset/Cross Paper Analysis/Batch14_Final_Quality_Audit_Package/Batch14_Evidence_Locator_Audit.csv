@@ -1,0 +1,61 @@
+pair_id,side,claim_id,pair_file,master_file,pair_page,master_page,master_quote,file_match,page_match,quote_present,validation_result
+B12E-001,focal,P006-B01,2025.acl-long.1587.pdf,2025.acl-long.1587.pdf,8,8,PDF p. 8; Table 3,True,True,True,PASS
+B12E-001,comparison,P007-CORR-01,2025.findings-emnlp.1035.pdf,2025.findings-emnlp.1035.pdf,2; 15,2; 15,Table 1 PRAUC average: GPT-4 0.74; Ensemble 0.72; Q2 NLI 0.68; Critic 0.67; K-BERTScore 0.65; Consistency 0.50. Table 10 weighted-F1 average: GPT-4 0.74; Ensemble 0.73.,True,True,True,PASS
+B12E-002,focal,P006-B01,2025.acl-long.1587.pdf,2025.acl-long.1587.pdf,8,8,PDF p. 8; Table 3,True,True,True,PASS
+B12E-002,comparison,P010-CORR-04,2026.emnlp-main.610.pdf,2026.emnlp-main.610.pdf,7,7,PDF p. 7; Section 6.1,True,True,True,PASS
+B12E-003,focal,P006-B01,2025.acl-long.1587.pdf,2025.acl-long.1587.pdf,8,8,PDF p. 8; Table 3,True,True,True,PASS
+B12E-003,comparison,P012-CORR-02,2403.18802v4.pdf,2403.18802v4.pdf,5,5,"The paper reports 11,528 agree and 4,483 disagree, totaling 16,011 facts; agreement 72.0%.",True,True,True,PASS
+B12E-004,focal,P006-B01,2025.acl-long.1587.pdf,2025.acl-long.1587.pdf,8,8,PDF p. 8; Table 3,True,True,True,PASS
+B12E-004,comparison,P012-CORR-03,2403.18802v4.pdf,2403.18802v4.pdf,5,5,"The manually re-annotated sample reports 76 SAFE wins, 19 human wins, and 5 neither.",True,True,True,PASS
+B12E-005,focal,P007-CORR-01,2025.findings-emnlp.1035.pdf,2025.findings-emnlp.1035.pdf,2; 15,2; 15,Table 1 PRAUC average: GPT-4 0.74; Ensemble 0.72; Q2 NLI 0.68; Critic 0.67; K-BERTScore 0.65; Consistency 0.50. Table 10 weighted-F1 average: GPT-4 0.74; Ensemble 0.73.,True,True,True,PASS
+B12E-005,comparison,P010-CORR-04,2026.emnlp-main.610.pdf,2026.emnlp-main.610.pdf,7,7,PDF p. 7; Section 6.1,True,True,True,PASS
+B12E-006,focal,P007-CORR-01,2025.findings-emnlp.1035.pdf,2025.findings-emnlp.1035.pdf,2; 15,2; 15,Table 1 PRAUC average: GPT-4 0.74; Ensemble 0.72; Q2 NLI 0.68; Critic 0.67; K-BERTScore 0.65; Consistency 0.50. Table 10 weighted-F1 average: GPT-4 0.74; Ensemble 0.73.,True,True,True,PASS
+B12E-006,comparison,P012-CORR-02,2403.18802v4.pdf,2403.18802v4.pdf,5,5,"The paper reports 11,528 agree and 4,483 disagree, totaling 16,011 facts; agreement 72.0%.",True,True,True,PASS
+B12E-007,focal,P007-CORR-01,2025.findings-emnlp.1035.pdf,2025.findings-emnlp.1035.pdf,2; 15,2; 15,Table 1 PRAUC average: GPT-4 0.74; Ensemble 0.72; Q2 NLI 0.68; Critic 0.67; K-BERTScore 0.65; Consistency 0.50. Table 10 weighted-F1 average: GPT-4 0.74; Ensemble 0.73.,True,True,True,PASS
+B12E-007,comparison,P012-CORR-03,2403.18802v4.pdf,2403.18802v4.pdf,5,5,"The manually re-annotated sample reports 76 SAFE wins, 19 human wins, and 5 neither.",True,True,True,PASS
+B12E-008,focal,P016-CORR-03,2024.naacl-long.20.pdf,2024.naacl-long.20.pdf,7; 16,7; 16,"Table 5 lists ARES Kendall tau values: NQ 1.00/0.96, WoW 0.91/1.00, FEVER 0.82/1.00 (context/answer relevance).",True,True,True,PASS
+B12E-008,comparison,P018-CORR-01,2309.15217v2.pdf,2309.15217v2.pdf,5,5,Table 1 reports accuracy: Ragas .95/.78/.70; GPT Score .72/.52/.63; GPT Ranking .54/.40/.52.,True,True,True,PASS
+B12E-009,focal,P016-CORR-03,2024.naacl-long.20.pdf,2024.naacl-long.20.pdf,7; 16,7; 16,"Table 5 lists ARES Kendall tau values: NQ 1.00/0.96, WoW 0.91/1.00, FEVER 0.82/1.00 (context/answer relevance).",True,True,True,PASS
+B12E-009,comparison,P018-CORR-02,2309.15217v2.pdf,2309.15217v2.pdf,4–5,4–5,"The paper describes 50 Wikipedia pages, ChatGPT question/answer generation and two annotators for the three dimensions.",True,True,True,PASS
+B12E-010,focal,P016-CORR-03,2024.naacl-long.20.pdf,2024.naacl-long.20.pdf,7; 16,7; 16,"Table 5 lists ARES Kendall tau values: NQ 1.00/0.96, WoW 0.91/1.00, FEVER 0.82/1.00 (context/answer relevance).",True,True,True,PASS
+B12E-010,comparison,P018-CORR-03,2309.15217v2.pdf,2309.15217v2.pdf,1; 3–5,1; 3–5,Section 3 states all prompts used gpt-3.5-turbo-16k and answer relevance embeddings used text-embedding-ada-002.,True,True,True,PASS
+B12E-011,focal,P006-CORR-02,2025.acl-long.1587.pdf,2025.acl-long.1587.pdf,7,7,"Table 2 (VERIFY factual precision, Hard/Moderate/Easy): Llama 3.1 70B 70.07/75.76/89.30; Llama 3.1 405B 68.59/75.05/86.57. FactCheck-GPT scores are slightly higher for 405B in Hard and Moderate; most other comparisons are similar or lower.",True,True,True,PASS
+B12E-011,comparison,P007-CORR-03,2025.findings-emnlp.1035.pdf,2025.findings-emnlp.1035.pdf,4,4,Table 2 tests the null hypothesis that parameter scaling has no effect; only GPT-4 consistently rejects it. The reported scaling analyses are limited to TruthfulQA and FaithDial.,True,True,True,PASS
+B12E-012,focal,P005-CORR-01,2024.acl-long.586.pdf,2024.acl-long.586.pdf,5–6,5–6,“hallucination rates exhibit a clear three-level stair-like pattern on the 10 entity groups.”,True,True,True,PASS
+B12E-012,comparison,P006-CORR-01,2025.acl-long.1587.pdf,2025.acl-long.1587.pdf,6,6,"Table 1 factual precision (Hard → Moderate → Easy, %): GPT-4o 75.65→80.72→91.63; Gemini 73.78→78.02→89.86; Claude 74.95→79.92→89.61; Command R+ 73.15→80.71→91.65; Llama 70B 70.07→75.76→89.30; Llama 405B 68.59→75.05→86.57; Mistral Large 2 75.19→79.97→92.00.",True,True,True,PASS
+B12E-013,focal,P008-CORR-01,2025.ijcnlp-long.127.pdf,2025.ijcnlp-long.127.pdf,7–8,7–8,PDF p. 7; Table 2,True,True,True,PASS
+B12E-013,comparison,P011-CORR-01,2026.groundlm-1.81.pdf,2026.groundlm-1.81.pdf,1–3,1–3,PDF p. 3; Figure 2 and corpus profile,True,True,True,PASS
+B12E-014,focal,P008-CORR-01,2025.ijcnlp-long.127.pdf,2025.ijcnlp-long.127.pdf,7–8,7–8,PDF p. 7; Table 2,True,True,True,PASS
+B12E-014,comparison,P011-CORR-03,2026.groundlm-1.81.pdf,2026.groundlm-1.81.pdf,1; 3,1; 3,PDF pp. 3–4,True,True,True,PASS
+B12E-015,focal,P008-CORR-01,2025.ijcnlp-long.127.pdf,2025.ijcnlp-long.127.pdf,7–8,7–8,PDF p. 7; Table 2,True,True,True,PASS
+B12E-015,comparison,P020-CORR-02,2021.naacl-main.365.pdf,2021.naacl-main.365.pdf,2,2,The paper reports that 55.5% of questions require evidence from multiple paragraphs and 13% require evidence from tables or figures.,True,True,True,PASS
+B12E-016,focal,P008-CORR-02,2025.ijcnlp-long.127.pdf,2025.ijcnlp-long.127.pdf,3–4,3–4,PDF p. 18; Appendix B.3,True,True,True,PASS
+B12E-016,comparison,P020-CORR-03,2021.naacl-main.365.pdf,2021.naacl-main.365.pdf,6,6,"On the QASPER test set, LED-base with full text obtains Answer-F1 32.80; the reported human lower bound is 60.92, a difference of 28.12 F1 points.",True,True,True,PASS
+B12E-017,focal,P014-CORR-02,s41586-025-10072-4.pdf,s41586-025-10072-4.pdf,3; 5,3; 5,Table 3 lists the corresponding Scholar-CS rubric scores.,True,True,True,PASS
+B12E-017,comparison,P020-CORR-03,2021.naacl-main.365.pdf,2021.naacl-main.365.pdf,6,6,"On the QASPER test set, LED-base with full text obtains Answer-F1 32.80; the reported human lower bound is 60.92, a difference of 28.12 F1 points.",True,True,True,PASS
+B12E-018,focal,P014-CORR-02,s41586-025-10072-4.pdf,s41586-025-10072-4.pdf,3; 5,3; 5,Table 3 lists the corresponding Scholar-CS rubric scores.,True,True,True,PASS
+B12E-018,comparison,P020-CORR-04,2021.naacl-main.365.pdf,2021.naacl-main.365.pdf,6,6,"On the QASPER test set, LED-base obtains Evidence-F1 29.85, compared with a reported human lower bound of 71.62. This is evidence selection, not answer generation.",True,True,True,PASS
+B12E-019,focal,P009-CORR-01,2026.eacl-long.8.pdf,2026.eacl-long.8.pdf,10–15,10–15,PDF pp. 6–8,True,True,True,PASS
+B12E-019,comparison,P017-CORR-01,2026.findings-aacl.151.pdf,2026.findings-aacl.151.pdf,7,7,"Table 1 CRAG GPT5-mini values: PopQA 73.4, ARC 94.1, PubHealth 84.0, HotpotQA 84.3, MuSiQue 54.3; ARC best is HippoRAG2 96.5.",True,True,True,PASS
+B12E-020,focal,P009-CORR-01,2026.eacl-long.8.pdf,2026.eacl-long.8.pdf,10–15,10–15,PDF pp. 6–8,True,True,True,PASS
+B12E-020,comparison,P017-CORR-05,2026.findings-aacl.151.pdf,2026.findings-aacl.151.pdf,7,7,"We employ Contriever to retrieve documents from the full Wikipedia corpus for PopQA, Arc Challenge, and PubHealth. As for HotpotQA and Musique, we construct a retrieval corpus from the subset of documents associated with all questions in the test set.",True,True,True,PASS
+B12E-021,focal,P009-CORR-04,2026.eacl-long.8.pdf,2026.eacl-long.8.pdf,10–15,10–15,PDF pp. 6–8,True,True,True,PASS
+B12E-021,comparison,P017-CORR-01,2026.findings-aacl.151.pdf,2026.findings-aacl.151.pdf,7,7,"Table 1 CRAG GPT5-mini values: PopQA 73.4, ARC 94.1, PubHealth 84.0, HotpotQA 84.3, MuSiQue 54.3; ARC best is HippoRAG2 96.5.",True,True,True,PASS
+B12E-022,focal,P009-CORR-04,2026.eacl-long.8.pdf,2026.eacl-long.8.pdf,10–15,10–15,PDF pp. 6–8,True,True,True,PASS
+B12E-022,comparison,P017-CORR-05,2026.findings-aacl.151.pdf,2026.findings-aacl.151.pdf,7,7,"We employ Contriever to retrieve documents from the full Wikipedia corpus for PopQA, Arc Challenge, and PubHealth. As for HotpotQA and Musique, we construct a retrieval corpus from the subset of documents associated with all questions in the test set.",True,True,True,PASS
+B12E-023,focal,P015-CORR-02,06510-AAAI24.ChenJ.pdf,06510-AAAI24.ChenJ.pdf,5,5,Table 1 reports values at noise ratios 0 and .8.,True,True,True,PASS
+B12E-023,comparison,P009-CORR-02,2026.eacl-long.8.pdf,2026.eacl-long.8.pdf,9–12,9–12,PDF pp. 6–7,True,True,True,PASS
+B12E-024,focal,P015-CORR-02,06510-AAAI24.ChenJ.pdf,06510-AAAI24.ChenJ.pdf,5,5,Table 1 reports values at noise ratios 0 and .8.,True,True,True,PASS
+B12E-024,comparison,P009-CORR-03,2026.eacl-long.8.pdf,2026.eacl-long.8.pdf,14–16,14–16,PDF pp. 7–8,True,True,True,PASS
+B12E-025,focal,P015-CORR-05,06510-AAAI24.ChenJ.pdf,06510-AAAI24.ChenJ.pdf,7,7,"Table 7 ChatGPT-en: Acc 89, Accdoc 9, CR 57.14.",True,True,True,PASS
+B12E-025,comparison,P009-CORR-02,2026.eacl-long.8.pdf,2026.eacl-long.8.pdf,9–12,9–12,PDF pp. 6–7,True,True,True,PASS
+B12E-026,focal,P015-CORR-05,06510-AAAI24.ChenJ.pdf,06510-AAAI24.ChenJ.pdf,7,7,"Table 7 ChatGPT-en: Acc 89, Accdoc 9, CR 57.14.",True,True,True,PASS
+B12E-026,comparison,P009-CORR-03,2026.eacl-long.8.pdf,2026.eacl-long.8.pdf,14–16,14–16,PDF pp. 7–8,True,True,True,PASS
+B12E-027,focal,P008-CORR-01,2025.ijcnlp-long.127.pdf,2025.ijcnlp-long.127.pdf,7–8,7–8,PDF p. 7; Table 2,True,True,True,PASS
+B12E-027,comparison,P021-CORR-02,ooae021.pdf,ooae021.pdf,5–6,5–6,Majority-voting macro-average F1 is 0.93 on SciFact development and 0.92 on CoVERt; best individual-model macro-average F1 is 0.89 on each.,True,True,True,PASS
+B12E-028,focal,P008-CORR-01,2025.ijcnlp-long.127.pdf,2025.ijcnlp-long.127.pdf,7–8,7–8,PDF p. 7; Table 2,True,True,True,PASS
+B12E-028,comparison,P021-CORR-03,ooae021.pdf,ooae021.pdf,6–7,6–7,"In the Open clinician-review setting, abstract retrieval relevance is 79.0%, sentence selection relevance is 67.4%, and label agreement is 63.2%.",True,True,True,PASS
+B12E-029,focal,P008-CORR-01,2025.ijcnlp-long.127.pdf,2025.ijcnlp-long.127.pdf,7–8,7–8,PDF p. 7; Table 2,True,True,True,PASS
+B12E-029,comparison,P021-CORR-05,ooae021.pdf,ooae021.pdf,5–6,5–6,The clinician evaluation included 19 clinical research claims across six disease categories. Retrieval recall was not measured because exhaustive review of all relevant PubMed abstracts was infeasible.,True,True,True,PASS
+B12E-030,focal,P008-CORR-02,2025.ijcnlp-long.127.pdf,2025.ijcnlp-long.127.pdf,3–4,3–4,PDF p. 18; Appendix B.3,True,True,True,PASS
+B12E-030,comparison,P010-CORR-03,2026.emnlp-main.610.pdf,2026.emnlp-main.610.pdf,7,7,PDF p. 7; Section 6.1,True,True,True,PASS

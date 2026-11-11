@@ -1,0 +1,27 @@
+{
+  "dataset": "allenai/qasper",
+  "source": "Hugging Face datasets-server Parquet export",
+  "data_directory": "C:\\Users\\USER\\Desktop\\Final project\\Scientific_Evidence_Analysis\\datasets\\benchmarks\\qasper\\data",
+  "parquet_files": {
+    "test": {
+      "url": "https://huggingface.co/datasets/allenai/qasper/resolve/refs%2Fconvert%2Fparquet/qasper/test/0000.parquet",
+      "size": 7074873,
+      "filename": "0000.parquet"
+    },
+    "train": {
+      "url": "https://huggingface.co/datasets/allenai/qasper/resolve/refs%2Fconvert%2Fparquet/qasper/train/0000.parquet",
+      "size": 14374550,
+      "filename": "0000.parquet"
+    },
+    "validation": {
+      "url": "https://huggingface.co/datasets/allenai/qasper/resolve/refs%2Fconvert%2Fparquet/qasper/validation/0000.parquet",
+      "size": 4749127,
+      "filename": "0000.parquet"
+    }
+  },
+  "record_counts": {
+    "test": 416,
+    "train": 888,
+    "validation": 281
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "dataset": "PubTables-1M",
+  "source_dataset": "https://huggingface.co/datasets/bsmock/pubtables-1m",
+  "official_repository": "https://github.com/microsoft/table-transformer",
+  "download_date_utc": "2026-11-10T09:29:33.967750+00:00",
+  "downloaded_records": 0,
+  "status": "not_downloaded",
+  "reason": "The official Hugging Face dataset card states that the dataset is provided only as 18 tar.gz archives and that Hugging Face Datasets integration is not supported. The viewer exposes no splits or Parquet files. The annotation and matching image files are only available inside large split archives, with no official per-table sample endpoint. Downloading those full archives would violate the requested resource limits, so no PubTables data archive was fetched.",
+  "license": "CDLA-Permissive-2.0"
+}

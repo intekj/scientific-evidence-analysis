@@ -1,0 +1,16 @@
+flowchart TD
+    A[Fixed 21-paper corpus PDFs] --> B[Canonical claim store]
+    B --> C[Research-question normalizer]
+    C --> D[Candidate claim retrieval]
+    D --> E[Evidence locator verification]
+    E --> F[Context normalizer]
+    F --> G[Comparability gate]
+    G --> H[Pairwise relation annotation]
+    H --> I[Human review and adjudication]
+    I --> J[Uncertainty manager]
+    J --> K[Constrained synthesis generator]
+    K --> L[Traceable synthesis and audit report]
+    E --> M[Abstain: insufficient evidence]
+    G --> M
+    I --> M
+    J --> M

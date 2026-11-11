@@ -1,0 +1,14 @@
+BATCH 12F — AI CRITICAL REVIEW REPORT
+
+The first five candidate pairs were reviewed against the cited original PDF pages.
+
+Decisions:
+- B12E-001: ACCEPT — methodological difference.
+- B12E-002: ACCEPT — methodological difference.
+- B12E-003: ACCEPT — methodological difference.
+- B12E-004: ACCEPT WITH QUALIFICATION — methodological difference; 76/19/5 is only a 100-case subset selected from initial SAFE-human disagreements.
+- B12E-005: ACCEPT — methodological difference.
+
+No genuine contradiction is established by these five pairs. The source pages checked were P006 PDF p.8, P007 PDF pp.2 and 15, P010 PDF p.7, and P012 PDF p.5.
+
+This is an AI critical review, not a human review. Human reviewer fields remain blank. Do not report this as inter-annotator agreement. An independent second human annotator is still needed.

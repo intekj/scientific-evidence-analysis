@@ -1,0 +1,54 @@
+{
+    "dataset": "SciFact",
+    "description": "Scientific claim verification dataset",
+    "generated_at_utc": "2026-11-10T12:12:43.380022+00:00",
+    "files": {
+        "corpus.jsonl": {
+            "size_bytes": 8307875,
+            "sha256": "b8d6c89624cb2ed74dee8938effc4f5d8bd2086887880af8110d64be4ceade62"
+        },
+        "claims_train.jsonl": {
+            "size_bytes": 175616,
+            "sha256": "f4c8fa82d8bd0653a9cc8d61a6ea48c25eacea64e90af5dbf390ebb1b74372f0"
+        },
+        "claims_dev.jsonl": {
+            "size_bytes": 65007,
+            "sha256": "86f0435d08fdb65d1aa41d1472684f57e6e71930626497bdf4d7a9ec1a632217"
+        },
+        "claims_test.jsonl": {
+            "size_bytes": 33769,
+            "sha256": "558930d75215c73f84a28fe538307d6d397c9de1ec7239514cf45f80d75d2ca3"
+        }
+    },
+    "statistics": {
+        "corpus_documents": 5183,
+        "claim_splits": {
+            "train": {
+                "claims": 809,
+                "evidence_annotations": 957,
+                "claims_without_evidence": 304,
+                "unlabeled_claims": 0
+            },
+            "dev": {
+                "claims": 300,
+                "evidence_annotations": 338,
+                "claims_without_evidence": 112,
+                "unlabeled_claims": 0
+            },
+            "test": {
+                "claims": 300,
+                "evidence_annotations": 0,
+                "claims_without_evidence": 0,
+                "unlabeled_claims": 300
+            }
+        },
+        "total_claims": 1409,
+        "total_evidence_annotations": 1295,
+        "claims_without_evidence": 416,
+        "unlabeled_claims": 300,
+        "evidence_label_distribution": {
+            "CONTRADICT": 463,
+            "SUPPORT": 832
+        }
+    }
+}

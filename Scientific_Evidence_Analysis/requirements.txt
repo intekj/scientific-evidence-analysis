@@ -1,0 +1,12 @@
+# Core CPU-friendly application dependencies (Python 3.10+)
+streamlit>=1.32,<2
+PyMuPDF>=1.24,<2
+pandas>=2.0,<3
+scikit-learn>=1.3,<2
+datasets>=2.18,<4
+
+# Optional semantic embeddings (model is used only when already cached locally):
+# sentence-transformers>=2.6,<4
+
+# Optional test runner:
+# pytest>=7,<9

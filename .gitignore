@@ -1,0 +1,18 @@
+﻿# Python virtual environment
+Scientific_Evidence_Analysis/venv/
+Scientific_Evidence_Analysis/.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Secrets
+.env
+
+# OS files
+.DS_Store
+Thumbs.db

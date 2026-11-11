@@ -1,0 +1,13 @@
+Audit item,Result,Interpretation
+Canonical master,claims.csv; 291 rows; 21 papers,Latest mounted canonical master inspected
+Claim IDs,291 unique; 0 missing; 0 duplicates,PASS
+Pair rows,30 unique pair IDs; 0 duplicate pair IDs,PASS
+Claim references,60/60 exist; 60/60 paper IDs match,PASS
+Evidence locators,60/60 source filenames and PDF pages match master; 60/60 evidence quotes present,PASS
+Cross-paper design,30/30 pairs compare distinct papers,PASS
+Duplicate unordered pairs,0,PASS
+Relation distribution,"{""RELATED_NONCOMPARABLE"": 15, ""CONTEXTUALIZES"": 13, ""METHODOLOGICAL_DIFFERENCE"": 1, ""QUALIFIES"": 1}",No SUPPORTS or CONTRADICTS labels in selected pilot
+Human review,30/30 pending human sign-off,Not independently human-adjudicated
+Status consistency,25 rows still say CANDIDATE_ONLY_NOT_VALIDATED despite proposed adjudication,"Metadata inconsistency; retain as pending human sign-off, do not treat as final human labels"
+Comparability terminology,1 RELATED_NONCOMPARABLE pair is marked PARTIALLY_COMPARABLE (B12E-003),Review wording; rationale says broad construct related but metrics/protocol not directly comparable
+Conclusion,CONDITIONAL PASS,Dataset/locator integrity passes; annotation status and one terminology flag remain open

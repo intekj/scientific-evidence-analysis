@@ -1,0 +1,9 @@
+evaluation_id,component,metrics,reference_standard,analysis_unit,caveat
+EV-01,Claim retrieval,Recall@k; Precision@k,Expert-marked relevant claim set for each research question,Question-level; report macro average,Pilot only until sufficient questions
+EV-02,Evidence grounding,Locator accuracy; supported statement rate; unsupported-claim rate,Independent source-PDF verification,Statement-level and synthesis-level,Citation presence alone is not evidence support
+EV-03,Relation classification,Macro-F1; per-class P/R/F1; confusion matrix,Adjudicated claim-pair gold labels,Paper-held-out split,Do not randomly split claim pairs from same paper
+EV-04,Annotator reliability,Cohen kappa or Krippendorff alpha; raw agreement,Two independent annotators + adjudicator,Pair-level,Report class prevalence and disagreements
+EV-05,Synthesis quality,"Expert rubric: correctness, completeness, context, traceability, abstention",Blind independent expert ratings,Question-level,Predefine rubric and reviewer instructions
+EV-06,Uncertainty quality,Error/disagreement rate by ordinal confidence band,Human-reviewed relation set,Relation-level,Ordinal confidence is not a probability
+EV-07,Calibration (future),Brier score; expected calibration error,Held-out paper-level test set with probability labels,Relation-level,Only after calibrated probabilistic model exists
+EV-08,Ablation,Similarity-only vs full comparability gate vs no uncertainty layer,Same corpus/questions and adjudicated test set,Question-level,Keep all other settings constant

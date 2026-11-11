@@ -1,0 +1,103 @@
+{
+  "dataset": "DocLayNet",
+  "source": "official DocLayNet core ZIP via HTTP byte ranges",
+  "source_url": "https://codait-cos-dax.s3.us.cloud-object-storage.appdomain.cloud/dax-doclaynet/1.0.0/DocLayNet_core.zip",
+  "source_etag": "\"52242220284e12538949c5b06eb2777c-448\"",
+  "original_archive_bytes": 30012083650,
+  "download_date_utc": "2026-11-10T10:25:00.085590+00:00",
+  "requested_page_count": 150,
+  "sampling_seed": 2026,
+  "sampling": "deterministic reservoir sampling balanced across document categories",
+  "splits": {
+    "train": {
+      "record_count": 50,
+      "annotation_count": 771,
+      "category_distribution": {
+        "financial_reports": 8,
+        "scientific_articles": 8,
+        "laws_and_regulations": 9,
+        "government_tenders": 8,
+        "manuals": 8,
+        "patents": 9
+      },
+      "annotation_types": [
+        "area",
+        "bbox",
+        "category_id:1",
+        "category_id:10",
+        "category_id:11",
+        "category_id:2",
+        "category_id:3",
+        "category_id:4",
+        "category_id:5",
+        "category_id:6",
+        "category_id:7",
+        "category_id:8",
+        "category_id:9",
+        "iscrowd",
+        "segmentation"
+      ],
+      "source_split": "train"
+    },
+    "val": {
+      "record_count": 50,
+      "annotation_count": 758,
+      "category_distribution": {
+        "financial_reports": 9,
+        "scientific_articles": 8,
+        "laws_and_regulations": 8,
+        "government_tenders": 8,
+        "manuals": 9,
+        "patents": 8
+      },
+      "annotation_types": [
+        "area",
+        "bbox",
+        "category_id:1",
+        "category_id:10",
+        "category_id:11",
+        "category_id:2",
+        "category_id:3",
+        "category_id:4",
+        "category_id:5",
+        "category_id:6",
+        "category_id:7",
+        "category_id:8",
+        "category_id:9",
+        "iscrowd",
+        "segmentation"
+      ],
+      "source_split": "val"
+    },
+    "test": {
+      "record_count": 50,
+      "annotation_count": 745,
+      "category_distribution": {
+        "financial_reports": 9,
+        "scientific_articles": 9,
+        "laws_and_regulations": 8,
+        "government_tenders": 8,
+        "manuals": 8,
+        "patents": 8
+      },
+      "annotation_types": [
+        "area",
+        "bbox",
+        "category_id:1",
+        "category_id:10",
+        "category_id:11",
+        "category_id:2",
+        "category_id:3",
+        "category_id:4",
+        "category_id:5",
+        "category_id:6",
+        "category_id:7",
+        "category_id:8",
+        "category_id:9",
+        "iscrowd",
+        "segmentation"
+      ],
+      "source_split": "test"
+    }
+  }
+}

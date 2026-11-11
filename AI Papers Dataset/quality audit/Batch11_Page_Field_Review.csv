@@ -1,0 +1,8 @@
+claim_id,flagged_field,stored_value,actual_pdf_page_locator,verification_against_original_pdf,review_status,decision
+P020-CORR-01,source_page,4599-4600,1–2,Proceedings pagination 4599–4600 is printed in the original 12-page PDF; evidence_pdf_page 1–2 correctly records PDF pages.,CONFIRMED_VALID_PAGINATION,Retain source_page/evidence_page as proceedings pages and evidence_pdf_page as PDF pages.
+P020-CORR-01,evidence_page,4599-4600,1–2,Proceedings pagination 4599–4600 is printed in the original 12-page PDF; evidence_pdf_page 1–2 correctly records PDF pages.,CONFIRMED_VALID_PAGINATION,Retain source_page/evidence_page as proceedings pages and evidence_pdf_page as PDF pages.
+P020-CORR-02,source_page,4600,2,Proceedings page 4600 maps to PDF page 2; the paper's proceedings range is 4599–4610.,CONFIRMED_VALID_PAGINATION,Retain proceedings page 4600 and PDF page 2 in their respective fields.
+P020-CORR-02,evidence_page,4600,2,Proceedings page 4600 maps to PDF page 2; the paper's proceedings range is 4599–4610.,CONFIRMED_VALID_PAGINATION,Retain proceedings page 4600 and PDF page 2 in their respective fields.
+P020-CORR-03,source_page,4604,6,Proceedings page 4604 maps to PDF page 6; the cited Answer-F1 comparison is recorded on PDF page 6.,CONFIRMED_VALID_PAGINATION,Retain proceedings page 4604 and evidence_pdf_page 6.
+P020-CORR-04,source_page,4605,6,Proceedings page 4605 maps to PDF page 6; the cited Evidence-F1 comparison is recorded on PDF page 6.,CONFIRMED_VALID_PAGINATION,Retain proceedings page 4605 and evidence_pdf_page 6.
+P020-CORR-04,evidence_page,4605,6,Proceedings page 4605 maps to PDF page 6; the cited Evidence-F1 comparison is recorded on PDF page 6.,CONFIRMED_VALID_PAGINATION,Retain proceedings page 4605 and evidence_pdf_page 6.

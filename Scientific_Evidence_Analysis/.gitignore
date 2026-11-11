@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.streamlit/secrets.toml
+data/uploads/*
+data/processed/*
+data/papers.json
+!data/uploads/.gitkeep
+!data/processed/.gitkeep
+models/*
+!models/.gitkeep
+.venv/
+venv/
