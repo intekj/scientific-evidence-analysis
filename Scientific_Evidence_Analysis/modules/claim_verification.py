@@ -20,6 +20,8 @@ class EvidenceLabel(str, Enum):
 
 @dataclass(frozen=True)
 class ClassifiedEvidence:
+    """Preliminary automated signal, independent of any dataset review status."""
+
     evidence: RetrievedEvidence
     label: EvidenceLabel
     reason: str
@@ -187,7 +189,7 @@ def _explicit_metric_relation(claim: str, passage: str) -> int | None:
 
 
 def classify_evidence(claim: str, evidence: RetrievedEvidence) -> ClassifiedEvidence:
-    """Classify evidence conservatively with topical overlap and explicit cues."""
+    """Return a preliminary heuristic signal, never a human-verified verdict."""
     normalized_claim = claim.strip()
     if normalized_claim.endswith("?") or QUESTION_START.match(normalized_claim):
         return ClassifiedEvidence(

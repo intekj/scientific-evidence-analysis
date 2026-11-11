@@ -14,9 +14,25 @@ from modules.claim_verification import (
     verify_claim,
 )
 from modules.context_extraction import extract_context
+from modules.curated_dataset import (
+    DATASET_ROOT,
+    CuratedDataset,
+    CuratedDatasetError,
+    analysis_related_to_claims,
+    import_canonical_pdfs,
+    load_curated_dataset,
+    load_optional_analysis_files,
+    retrieve_curated_claims,
+)
 from modules.disagreement_analysis import compare_evidence
 from modules.embedding_engine import EmbeddingEngine
-from modules.evidence_retrieval import retrieve_evidence
+from modules.evidence_retrieval import RetrievedEvidence, retrieve_evidence
+from modules.evidence_presentation import (
+    classify_for_display,
+    extract_key_findings,
+    highlighted_passage,
+    synthesis_answer,
+)
 from modules.evidence_synthesis import generate_synthesis
 from modules.pdf_processor import PDFExtractionError, ProcessedPaper, process_pdf
 from modules.paper_storage import LocalPaperStore, StoredPaper
@@ -42,19 +58,54 @@ def initialize_state() -> None:
         "papers": {},
         "paper_chunks": {},
         "last_retrieval": [],
+        "last_curated_retrieval": [],
+        "last_search_performed": False,
         "last_verified": [],
         "last_query": "",
         "embedding_engine": EmbeddingEngine(),
+        "curated_engine": EmbeddingEngine(),
     }
     for key, value in defaults.items():
         if key not in st.session_state:
             st.session_state[key] = value
+    engine = st.session_state.embedding_engine
+    if not hasattr(engine, "index_ready") or not hasattr(engine, "invalidate_index"):
+        st.session_state.embedding_engine = EmbeddingEngine()
     if not st.session_state.get("paper_storage_initialized"):
         restored = st.session_state.paper_store.restore()
         st.session_state.papers = restored.papers
         st.session_state.paper_records = restored.records
         st.session_state.storage_warnings = restored.warnings
         st.session_state.paper_storage_initialized = True
+    if not st.session_state.get("canonical_pdf_import_initialized"):
+        with st.spinner("Checking and indexing the 21 canonical research PDFs..."):
+            imported = import_canonical_pdfs(
+                st.session_state.paper_store,
+                dataset_root=DATASET_ROOT,
+                restored_papers=st.session_state.papers,
+            )
+        st.session_state.papers.update(imported.papers)
+        for paper_id in imported.papers:
+            st.session_state.paper_chunks.pop(paper_id, None)
+        if imported.papers:
+            st.session_state.embedding_engine.invalidate_index()
+        st.session_state.paper_records = st.session_state.paper_store.list_records()
+        st.session_state.storage_warnings.extend(imported.warnings)
+        st.session_state.canonical_pdf_discovered = imported.discovered_count
+        st.session_state.canonical_pdf_indexed = imported.indexed_count
+        st.session_state.canonical_pdf_import_initialized = True
+    if not st.session_state.get("curated_dataset_loaded"):
+        with st.spinner("Loading curated research claims..."):
+            try:
+                st.session_state.curated_dataset = load_curated_dataset()
+                st.session_state.curated_dataset_error = ""
+            except CuratedDatasetError as exc:
+                st.session_state.curated_dataset = None
+                st.session_state.curated_dataset_error = str(exc)
+            analysis, warnings = load_optional_analysis_files()
+            st.session_state.curated_analysis = analysis
+            st.session_state.curated_analysis_warnings = warnings
+            st.session_state.curated_dataset_loaded = True
 
 
 def refresh_paper_records() -> list[StoredPaper]:
@@ -69,9 +120,15 @@ def all_chunks() -> list[EvidenceChunk]:
     for paper_id in list(cached):
         if paper_id not in papers:
             del cached[paper_id]
-    for paper_id, paper in papers.items():
-        if paper_id not in cached:
-            cached[paper_id] = chunk_paper(paper)
+    missing = [
+        (paper_id, paper)
+        for paper_id, paper in papers.items()
+        if paper_id not in cached
+    ]
+    if missing:
+        with st.spinner("Preparing searchable passages from the papers..."):
+            for paper_id, paper in missing:
+                cached[paper_id] = chunk_paper(paper)
     return [
         chunk
         for paper_id in papers
@@ -79,17 +136,43 @@ def all_chunks() -> list[EvidenceChunk]:
     ]
 
 
+def retrieve_with_progress(
+    query: str,
+    chunks: list[EvidenceChunk],
+    top_k: int,
+) -> list[RetrievedEvidence]:
+    engine: EmbeddingEngine = st.session_state.embedding_engine
+    if engine.index_ready:
+        return retrieve_evidence(query, chunks, top_k=top_k, engine=engine)
+    with st.spinner("Building the paper search index and searching..."):
+        return retrieve_evidence(query, chunks, top_k=top_k, engine=engine)
+
+
 def page_reference(chunk: EvidenceChunk) -> str:
     return f"{chunk.paper_name} — page {chunk.page_number}"
 
 
-def show_evidence(item, label: str | None = None) -> None:
+def show_evidence(
+    item,
+    label: str | None = None,
+    query: str | None = None,
+) -> None:
     chunk = item.evidence.chunk if isinstance(item, ClassifiedEvidence) else item.chunk
     score = item.evidence.score if isinstance(item, ClassifiedEvidence) else item.score
     heading = label or page_reference(chunk)
+    search_query = query if query is not None else st.session_state.last_query
     with st.expander(f"{heading} · similarity {score:.3f}", expanded=False):
-        st.caption(f"Source: {page_reference(chunk)}")
-        st.write(chunk.text)
+        st.caption(
+            f"Source PDF: {chunk.paper_name} · Paper ID: {chunk.paper_id} · "
+            f"Page: {chunk.page_number}"
+        )
+        st.markdown("**Relevant sentences**")
+        st.markdown(
+            highlighted_passage(search_query, chunk.text),
+            unsafe_allow_html=True,
+        )
+        st.caption("Original passage (for verification)")
+        st.text(chunk.text)
         if isinstance(item, ClassifiedEvidence):
             st.caption(f"Preliminary classification: {item.label.value}. {item.reason}")
 
@@ -130,6 +213,12 @@ def dashboard(chunks: list[EvidenceChunk]) -> None:
     a.metric("Uploaded papers", len(st.session_state.papers))
     b.metric("Extracted passages", len(chunks))
     c.metric("Similarity backend", st.session_state.embedding_engine.backend)
+    st.info(
+        "Canonical PDFs indexed: "
+        f"{st.session_state.get('canonical_pdf_indexed', 0)}/21."
+    )
+    for warning in st.session_state.get("storage_warnings", []):
+        st.warning(warning)
     st.subheader("Quick navigation")
     st.markdown(
         "- **Upload Research Papers:** add and inspect text-based PDF papers.\n"
@@ -152,6 +241,12 @@ def upload_page() -> None:
         "Password-protected, unreadable, or scanned/image-only files are not treated "
         "as successfully extracted."
     )
+    st.info(
+        "Canonical PDFs indexed: "
+        f"{st.session_state.get('canonical_pdf_indexed', 0)}/21."
+    )
+    for warning in st.session_state.get("storage_warnings", []):
+        st.warning(warning)
     uploads = st.file_uploader(
         "Choose one or more scientific PDF files",
         type=["pdf"],
@@ -200,6 +295,7 @@ def upload_page() -> None:
             )
             st.session_state.papers[processed.paper_id] = processed
             st.session_state.paper_chunks.pop(processed.paper_id, None)
+            st.session_state.embedding_engine.invalidate_index()
             refresh_paper_records()
             message = (
                 f"Restored {uploaded.name} from local storage."
@@ -261,6 +357,8 @@ def upload_page() -> None:
         for paper_id in removed:
             st.session_state.papers.pop(paper_id, None)
             st.session_state.paper_chunks.pop(paper_id, None)
+        if removed:
+            st.session_state.embedding_engine.invalidate_index()
         for error in errors:
             st.error(error)
         refresh_paper_records()
@@ -282,6 +380,8 @@ def upload_page() -> None:
         for paper_id in removed:
             st.session_state.papers.pop(paper_id, None)
             st.session_state.paper_chunks.pop(paper_id, None)
+        if removed:
+            st.session_state.embedding_engine.invalidate_index()
         for error in errors:
             st.error(error)
         refresh_paper_records()
@@ -300,25 +400,192 @@ def retrieval_page(chunks: list[EvidenceChunk]) -> None:
     )
     top_k = st.slider("Maximum passages", min_value=1, max_value=30, value=10)
     if st.button("Search all papers", type="primary"):
-        if not chunks:
-            st.warning("Upload at least one paper before searching.")
+        dataset: CuratedDataset | None = st.session_state.curated_dataset
+        if not chunks and (dataset is None or dataset.records.empty):
+            st.warning("No searchable PDFs or curated claims are available.")
         elif not query.strip():
             st.warning("Enter a claim or question to search.")
         else:
             st.session_state.last_query = query.strip()
-            st.session_state.last_retrieval = retrieve_evidence(
-                query,
-                chunks,
-                top_k=top_k,
-                engine=st.session_state.embedding_engine,
+            st.session_state.last_retrieval = (
+                retrieve_with_progress(query, chunks, top_k) if chunks else []
             )
+            st.session_state.last_curated_retrieval = []
+            if dataset is not None:
+                with st.spinner("Searching curated claims separately..."):
+                    st.session_state.last_curated_retrieval = retrieve_curated_claims(
+                        query,
+                        dataset,
+                        st.session_state.curated_engine,
+                        top_k,
+                    )
+            st.session_state.last_search_performed = True
+    if st.session_state.curated_dataset_error:
+        st.error(
+            "Curated claims are unavailable. Full-text PDF retrieval can still be "
+            f"used. {st.session_state.curated_dataset_error}"
+        )
+    for label, warning in st.session_state.curated_analysis_warnings.items():
+        st.warning(f"{label} is unavailable: {warning}")
+
+    curated_results = st.session_state.last_curated_retrieval
+    if curated_results:
+        st.subheader("Curated Claims")
+        dataset: CuratedDataset | None = st.session_state.curated_dataset
+        if dataset is not None:
+            status_counts = dataset.records["normalized_validation_status"].value_counts()
+            missing_quotes = dataset.records[
+                "verified_evidence_quote_or_table"
+            ].fillna("").str.strip().eq("").sum()
+            st.caption(
+                f"Loaded {len(dataset.records)} claims across "
+                f"{len(dataset.paper_files)} canonical papers. Review-status counts: "
+                + ", ".join(
+                    f"{status}: {count}"
+                    for status, count in status_counts.items()
+                )
+                + f". Records without a verified quotation: {missing_quotes}."
+            )
+        st.caption(
+            "Matches from the reviewed master dataset, ranked independently from "
+            "full-text PDF passages. Dataset review status is not an automated "
+            "support/contradiction prediction."
+        )
+        st.dataframe(
+            [
+                {
+                    "Claim ID": item.claim_id,
+                    "Canonical paper ID": item.paper_id,
+                    "Paper title": item.paper_title,
+                    "Claim": item.claim_text,
+                    "Dataset review status": item.normalized_validation_status,
+                    "Validation decision": item.validation_decision,
+                    "Annotation status": item.annotation_status,
+                    "Similarity (curated index)": round(item.similarity, 4),
+                }
+                for item in curated_results
+            ],
+            hide_index=True,
+            width="stretch",
+        )
+        st.subheader("Verified Source Evidence")
+        st.caption(
+            "These are the dataset's quoted evidence fields. A quotation by itself "
+            "does not validate the associated claim; check its displayed review status."
+        )
+        for item in curated_results:
+            with st.expander(
+                f"{item.claim_id} · {item.normalized_validation_status}"
+            ):
+                st.caption(
+                    f"{item.source_filename} · {item.paper_id} · "
+                    f"PDF page {item.evidence_page or 'not recorded'}"
+                    + (
+                        f" · {item.evidence_section}"
+                        if item.evidence_section else ""
+                    )
+                )
+                if item.evidence_quote:
+                    st.text(item.evidence_quote)
+                else:
+                    st.info("No verified evidence quotation is recorded for this claim.")
+                if item.evidence_text:
+                    st.caption("Original evidence_text field")
+                    st.text(item.evidence_text)
+                st.caption(f"Original validation decision: {item.validation_decision}")
+                st.caption(f"Annotation status: {item.annotation_status}")
+                st.caption(item.validation_status_reason)
+
+        related_analysis = analysis_related_to_claims(
+            st.session_state.curated_analysis,
+            [item.claim_id for item in curated_results],
+            [item.paper_id for item in curated_results],
+        )
+        st.subheader("Curated Cross-paper Analysis and Uncertainty")
+        for label, frame in related_analysis.items():
+            with st.expander(f"{label} ({len(frame)} linked record(s))"):
+                if frame.empty:
+                    st.info("No records explicitly link to these curated claims or papers.")
+                else:
+                    st.dataframe(frame, hide_index=True, width="stretch")
+        if not related_analysis:
+            st.info(
+                "No cross-paper or uncertainty rows explicitly link to these claims."
+                if st.session_state.curated_analysis
+                else (
+                    "No optional cross-paper analysis tables were loaded. Curated "
+                    "claims remain searchable independently."
+                )
+            )
+    elif (
+        st.session_state.last_search_performed
+        and st.session_state.curated_dataset is not None
+    ):
+        st.subheader("Curated Claims")
+        st.info("No curated claim matched this query in the curated dataset index.")
+
+    if st.session_state.last_search_performed:
+        st.subheader("Full-text PDF Evidence")
     if st.session_state.last_retrieval:
         st.caption(f"Similarity backend: {st.session_state.embedding_engine.backend}")
         st.info(
             "Similarity ranks topical relevance; it is not evidence that a claim is true."
         )
-        for item in st.session_state.last_retrieval:
-            show_evidence(item)
+        search_query = st.session_state.last_query
+        classified = [
+            classify_for_display(search_query, item)
+            for item in st.session_state.last_retrieval
+        ]
+        report = generate_synthesis(
+            search_query,
+            [item for _, item in classified],
+            chunks,
+        )
+        findings = extract_key_findings(search_query, st.session_state.last_retrieval)
+        st.subheader("Short answer")
+        st.info(synthesis_answer(report, findings))
+
+        st.subheader("Key findings from retrieved passages")
+        if findings:
+            for finding in findings:
+                source = finding.evidence.chunk
+                st.markdown(
+                    f"- {finding.sentence}  \n"
+                    f"  Source: **{source.paper_name}** · Paper ID: "
+                    f"`{source.paper_id}` · page {source.page_number}"
+                )
+        else:
+            st.info(
+                "The retrieved passages did not contain enough query-specific "
+                "sentences to summarize as key findings."
+            )
+
+        categories = (
+            "Supporting Evidence",
+            "Contradicting Evidence",
+            "Qualifying Evidence",
+            "Background / Context",
+            "Insufficient / Unclassified",
+            "Relevant (not polarity-classified)",
+        )
+        for category in categories:
+            group = [
+                (display_category, item)
+                for display_category, item in classified
+                if display_category == category
+            ]
+            if not group:
+                continue
+            st.subheader(category)
+            for _, item in group:
+                show_evidence(item, query=search_query)
+        with st.expander("Full evidence synthesis"):
+            st.markdown(report)
+    elif st.session_state.last_search_performed:
+        st.info(
+            "No full-text PDF passage matched this query. Curated claim results, "
+            "if available, are shown separately and are not combined with PDF evidence."
+        )
     elif chunks:
         st.info("Enter a question and search to view relevant passages.")
     else:
@@ -339,11 +606,10 @@ def verification_page(chunks: list[EvidenceChunk]) -> None:
         elif not claim.strip():
             st.warning("Enter a scientific claim.")
         else:
-            retrieved = retrieve_evidence(
+            retrieved = retrieve_with_progress(
                 claim,
                 chunks,
-                top_k=top_k,
-                engine=st.session_state.embedding_engine,
+                top_k,
             )
             st.session_state.last_query = claim.strip()
             st.session_state.last_verified = [
@@ -372,11 +638,10 @@ def disagreement_page(chunks: list[EvidenceChunk]) -> None:
         placeholder="Search term or claim to narrow candidate passages",
     )
     candidates = (
-        retrieve_evidence(
+        retrieve_with_progress(
             claim,
             chunks,
-            top_k=30,
-            engine=st.session_state.embedding_engine,
+            30,
         )
         if claim.strip()
         else []
@@ -506,6 +771,12 @@ human-annotated validation of disagreement categories.
 def main() -> None:
     initialize_state()
     chunks = all_chunks()
+    if st.session_state.curated_dataset_error:
+        st.sidebar.error(
+            "Curated claims unavailable: " + st.session_state.curated_dataset_error
+        )
+    for label, warning in st.session_state.curated_analysis_warnings.items():
+        st.sidebar.warning(f"{label} unavailable: {warning}")
     for warning in st.session_state.storage_warnings:
         st.warning(warning)
     with st.sidebar:

@@ -64,7 +64,7 @@ def chunk_pages(
             chunks.append(
                 EvidenceChunk(
                     chunk_id=f"{page.paper_id}:{page.page_number}:{index}",
-                    paper_id=page.paper_id,
+                    paper_id=page.canonical_paper_id or page.paper_id,
                     paper_name=page.paper_name,
                     page_number=page.page_number,
                     text=" ".join(group),

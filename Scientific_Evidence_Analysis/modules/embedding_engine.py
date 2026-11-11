@@ -19,6 +19,21 @@ class EmbeddingEngine:
     def __init__(self) -> None:
         self._model = None
         self._model_checked = False
+        self._indexed_passages: tuple[str, ...] | None = None
+        self._vectorizer: TfidfVectorizer | None = None
+        self._tfidf_matrix = None
+        self._passage_embeddings = None
+
+    @property
+    def index_ready(self) -> bool:
+        return self._indexed_passages is not None
+
+    def invalidate_index(self) -> None:
+        """Discard the corpus index after papers are added or removed."""
+        self._indexed_passages = None
+        self._vectorizer = None
+        self._tfidf_matrix = None
+        self._passage_embeddings = None
 
     @property
     def backend(self) -> str:
@@ -45,30 +60,52 @@ class EmbeddingEngine:
         if not passages:
             return []
         self._load_cached_model()
+        corpus = tuple(passages)
+        if corpus != self._indexed_passages:
+            self._index_passages(corpus)
         if self._model is not None:
-            embeddings = self._model.encode(
-                [query, *passages],
+            query_embedding = self._model.encode(
+                [query],
                 convert_to_numpy=True,
                 normalize_embeddings=True,
                 show_progress_bar=False,
             )
-            return cosine_similarity(embeddings[:1], embeddings[1:])[0].tolist()
-        return self._tfidf_similarities(query, passages)
+            return cosine_similarity(
+                query_embedding,
+                self._passage_embeddings,
+            )[0].tolist()
+        if self._vectorizer is None or self._tfidf_matrix is None:
+            return [0.0] * len(passages)
+        query_vector = self._vectorizer.transform([query])
+        return cosine_similarity(query_vector, self._tfidf_matrix)[0].tolist()
 
-    @staticmethod
-    def _tfidf_similarities(query: str, passages: Sequence[str]) -> list[float]:
-        """Use word and character features so short scientific terms still match."""
-        try:
+    def _index_passages(self, passages: tuple[str, ...]) -> None:
+        """Fit word unigram and bigram features across the searchable passages."""
+        vectorizer = None
+        tfidf_matrix = None
+        passage_embeddings = None
+        if self._model is not None:
+            passage_embeddings = self._model.encode(
+                list(passages),
+                convert_to_numpy=True,
+                normalize_embeddings=True,
+                show_progress_bar=False,
+            )
+        else:
             vectorizer = TfidfVectorizer(
                 lowercase=True,
                 ngram_range=(1, 2),
                 sublinear_tf=True,
                 token_pattern=r"(?u)\b\w+\b",
             )
-            matrix = vectorizer.fit_transform([query, *passages])
-        except ValueError:
-            return [0.0] * len(passages)
-        return cosine_similarity(matrix[:1], matrix[1:])[0].tolist()
+            try:
+                tfidf_matrix = vectorizer.fit_transform(passages)
+            except ValueError:
+                vectorizer = None
+        self._vectorizer = vectorizer
+        self._tfidf_matrix = tfidf_matrix
+        self._passage_embeddings = passage_embeddings
+        self._indexed_passages = passages
 
 
 def meaningful_terms(text: str) -> set[str]:

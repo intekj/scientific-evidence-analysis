@@ -49,6 +49,7 @@ Scientific_Evidence_Analysis/
 │   ├── context_extraction.py
 │   ├── disagreement_analysis.py
 │   ├── evidence_synthesis.py
+│   ├── curated_dataset.py
 │   ├── report_export.py
 │   └── paper_storage.py
 ├── data/
@@ -66,6 +67,72 @@ re-extracted to restore page text and chunks for retrieval, verification,
 disagreement analysis, and synthesis. Extracted text and chunks are regenerated
 in memory rather than persisted separately. Files and metadata stay in the project
 directory and are not sent to an external service.
+
+The app also discovers the 21 PDFs named by the canonical P001–P021 mapping in
+`modules/curated_dataset.py` under `../AI Papers Dataset/papers/` and copies them
+through the same local PDF store and extraction pipeline. Only those exact mapped
+filenames are imported; other PDFs in that directory are ignored. Canonical IDs
+are stored as additive metadata while the store retains its SHA-256 identity,
+and full-text chunks expose the canonical ID, mapped PDF filename, and original
+1-based PDF page number. Existing user uploads continue to use their SHA-256
+paper IDs. Canonical source PDFs are never modified. Already registered canonical
+papers are restored from local storage rather than copied again; missing,
+unreadable, or textless mapped files are reported in the app.
+
+## Curated master-claims pipeline
+
+When present, the app loads the master claim CSV from the sibling dataset
+directory, resolved relative to this project (not the process working directory):
+
+```text
+../AI Papers Dataset/Master Dataset/claims.csv
+```
+
+The loader validates required columns, nonempty claim identity/text fields,
+duplicate claim IDs, the P001–P021 canonical paper IDs, and the one-to-one
+`paper_id` / `source_filename` mapping. It reads the CSV as text, retains every
+source column unchanged in memory, and adds normalized review-status fields; it
+never edits the source file. Missing evidence quotations or page fields are
+allowed and displayed as unavailable rather than inferred.
+
+Validation decisions are normalized conservatively to `RETAINED`, `CORRECTED`,
+`MERGED`, `REJECTED`, `CANDIDATE / NEEDS REVIEW`, `CONTEXT ONLY`, or
+`UNKNOWN / NEEDS REVIEW`. Rejections and merges take precedence over other
+decision wording; corrections remain distinct from retained claims. A record is
+not marked retained based on a quotation alone: an affirmative decision and a
+reviewed annotation status are both required. Original decision, annotation,
+evidence-status, and rationale columns remain visible alongside the normalized
+status.
+
+On the **Evidence Retrieval** page, curated claim retrieval searches claim text
+and verified evidence quotations (using the evidence text field when no verified
+quotation is present). It uses its own `EmbeddingEngine` index and displays
+curated claims and source quotations separately from uploaded-PDF passage
+retrieval. Scores from these two indexes are not combined and curated claim
+matches are not treated as full-text PDF passage evidence. Curated citations use
+the dataset's canonical paper ID, source filename, evidence page, and section.
+
+Optional cross-paper data is loaded independently from:
+
+```text
+../AI Papers Dataset/Cross Paper Analysis/Batch12_Cross_Paper_Comparison.csv
+../AI Papers Dataset/Cross Paper Analysis/Batch12B_Disagreement_Analysis.csv
+../AI Papers Dataset/Cross Paper Analysis/Batch12C_Uncertainty_Register.csv
+```
+
+Each optional CSV is schema-checked independently. The app preserves its
+relationship/classification and uncertainty text, then shows records only when
+their explicit claim IDs or canonical paper IDs link to the current curated
+search results. Missing or invalid optional files generate a warning without
+preventing the app from starting. A missing or invalid master claims file is
+reported; uploaded-PDF search remains available.
+
+These are source-curated review decisions and evidence locators, not an
+automated scientific verdict. PDF-based labels remain preliminary heuristic
+signals; similarity is not entailment, and cross-paper relation labels are
+displayed as recorded rather than newly inferred. The analysis is limited to
+the dataset's current paper coverage and its manually curated quotations,
+page references, and review states.
 
 ## Installation (Windows / PowerShell)
 
@@ -109,7 +176,8 @@ Open the local address printed by Streamlit, usually
    automatically on later visits/restarts. Review each paper's filename, page
    count, processing status, upload date, and extracted text preview. Remove
    selected papers or confirm **Clear complete paper collection** to remove all
-   locally stored papers.
+   locally stored papers. The 21 mapped canonical PDFs are also added
+   automatically when available; the page reports any missing or unreadable files.
 2. **Evidence Retrieval:** enter a scientific claim or question and search. Each
    passage shows source filename, page, and similarity score.
 3. **Claim Verification:** retrieve passages and inspect their preliminary

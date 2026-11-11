@@ -18,6 +18,7 @@ class PaperPage:
     paper_name: str
     page_number: int
     text: str
+    canonical_paper_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -29,9 +30,15 @@ class ProcessedPaper:
     page_count: int
     pages: tuple[PaperPage, ...]
     extracted_text: str
+    canonical_paper_id: str | None = None
 
 
-def process_pdf(file_data: bytes, paper_name: str) -> ProcessedPaper:
+def process_pdf(
+    file_data: bytes,
+    paper_name: str,
+    *,
+    canonical_paper_id: str | None = None,
+) -> ProcessedPaper:
     """Extract text and basic metadata from a PDF without writing it to disk."""
     if not file_data:
         raise PDFExtractionError("The uploaded file is empty.")
@@ -55,7 +62,7 @@ def process_pdf(file_data: bytes, paper_name: str) -> ProcessedPaper:
                 "This PDF contains damaged or unreadable page data."
             ) from exc
         useful_pages = [
-            PaperPage(paper_id, paper_name, number, text)
+            PaperPage(paper_id, paper_name, number, text, canonical_paper_id)
             for number, text in page_texts
             if text
         ]
@@ -75,6 +82,7 @@ def process_pdf(file_data: bytes, paper_name: str) -> ProcessedPaper:
             page_count=document.page_count,
             pages=tuple(useful_pages),
             extracted_text="\n\n".join(page.text for page in useful_pages),
+            canonical_paper_id=canonical_paper_id,
         )
     finally:
         document.close()

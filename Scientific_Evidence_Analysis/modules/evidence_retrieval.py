@@ -33,6 +33,12 @@ RESULT_CUES = re.compile(
     r"demonstrated|we found|our results)\b",
     re.IGNORECASE,
 )
+DIRECT_ANSWER_CUES = re.compile(
+    r"\b(?:we found|results? (?:show|showed|indicate|indicated)|"
+    r"evidence suggests?|was associated with|was higher than|"
+    r"was lower than|no significant difference|significantly improved)\b",
+    re.IGNORECASE,
+)
 LITERATURE_REVIEW_CUES = re.compile(
     r"\b(?:previous studies|prior research|related work|literature review|"
     r"earlier studies|previously proposed|existing studies|review of)\b",
@@ -72,8 +78,18 @@ def _adjusted_rank_score(similarity: float, text: str) -> float:
     score = similarity
     if RESULT_CUES.search(lowered):
         score *= 1.18
+    if DIRECT_ANSWER_CUES.search(lowered):
+        score *= 1.10
     if LITERATURE_REVIEW_CUES.search(lowered):
         score *= 0.78
+    words = lowered.split()
+    citation_signals = (
+        len(YEAR_CITATION.findall(lowered))
+        + len(AUTHOR_CITATION.findall(lowered))
+        + len(DOI_OR_URL.findall(lowered))
+    )
+    if len(words) >= 12 and citation_signals >= 3:
+        score *= 0.55
     return score
 
 

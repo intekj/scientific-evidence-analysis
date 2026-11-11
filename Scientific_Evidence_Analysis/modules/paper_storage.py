@@ -29,6 +29,8 @@ class StoredPaper:
     upload_date: str
     processing_status: str
     error: str = ""
+    canonical_paper_id: str | None = None
+    canonical_filename: str | None = None
 
 
 @dataclass(frozen=True)
@@ -134,7 +136,32 @@ class LocalPaperStore:
                             upload_date=str(entry["upload_date"]),
                             processing_status=str(entry["processing_status"]),
                             error=str(entry.get("error", "")),
+                            canonical_paper_id=(
+                                str(entry["canonical_paper_id"])
+                                if entry.get("canonical_paper_id")
+                                else None
+                            ),
+                            canonical_filename=(
+                                str(entry["canonical_filename"])
+                                if entry.get("canonical_filename")
+                                else None
+                            ),
                         )
+                        if (
+                            record.canonical_paper_id is None
+                        ) != (record.canonical_filename is None):
+                            raise ValueError(
+                                "canonical paper ID and filename must be paired"
+                            )
+                        if record.canonical_paper_id is not None:
+                            from modules.curated_dataset import (
+                                validate_canonical_pdf_mapping,
+                            )
+
+                            validate_canonical_pdf_mapping(
+                                record.canonical_paper_id,
+                                record.canonical_filename or "",
+                            )
                         if (
                             len(record.sha256) != 64
                             or record.paper_id != record.sha256
@@ -225,14 +252,38 @@ class LocalPaperStore:
         self,
         file_data: bytes,
         original_filename: str,
+        *,
+        canonical_paper_id: str | None = None,
+        canonical_filename: str | None = None,
     ) -> tuple[StoredPaper, bool]:
         """Save a PDF once by SHA-256; return its record and duplicate flag."""
+        if (canonical_paper_id is None) != (canonical_filename is None):
+            raise ValueError(
+                "Canonical paper ID and canonical filename must be provided together."
+            )
+        if canonical_paper_id is not None and canonical_filename is not None:
+            from modules.curated_dataset import validate_canonical_pdf_mapping
+
+            validate_canonical_pdf_mapping(canonical_paper_id, canonical_filename)
         digest = sha256(file_data).hexdigest()
         display_name = self._display_filename(original_filename)
+        canonical_display_name = (
+            self._display_filename(canonical_filename)
+            if canonical_filename is not None
+            else None
+        )
         with _STORE_LOCK:
             records, _ = self._load_records()
             existing = next((item for item in records if item.sha256 == digest), None)
             if existing is not None:
+                if (
+                    canonical_paper_id is not None
+                    and existing.canonical_paper_id not in (None, canonical_paper_id)
+                ):
+                    raise ValueError(
+                        f"PDF is already mapped to canonical paper "
+                        f"{existing.canonical_paper_id}, not {canonical_paper_id}."
+                    )
                 path = self._pdf_path(existing.stored_filename)
                 try:
                     stored_digest = sha256(path.read_bytes()).hexdigest()
@@ -258,6 +309,19 @@ class LocalPaperStore:
                         for record in records
                     ]
                     self._write_records(records)
+                if canonical_paper_id is not None:
+                    updated = replace(
+                        existing,
+                        canonical_paper_id=canonical_paper_id,
+                        canonical_filename=canonical_display_name,
+                    )
+                    if updated != existing:
+                        existing = updated
+                        records = [
+                            updated if record.paper_id == digest else record
+                            for record in records
+                        ]
+                        self._write_records(records)
                 return existing, True
 
             stored_name = f"{self._safe_stem(display_name)}_{digest}.pdf"
@@ -278,6 +342,8 @@ class LocalPaperStore:
                 page_count=0,
                 upload_date=datetime.now(timezone.utc).isoformat(),
                 processing_status="processing",
+                canonical_paper_id=canonical_paper_id,
+                canonical_filename=canonical_display_name,
             )
             records.append(record)
             self._write_records(records)
@@ -369,7 +435,11 @@ class LocalPaperStore:
                     continue
 
                 try:
-                    paper = process_pdf(file_data, record.original_filename)
+                    paper = process_pdf(
+                        file_data,
+                        record.canonical_filename or record.original_filename,
+                        canonical_paper_id=record.canonical_paper_id,
+                    )
                 except PDFExtractionError as exc:
                     message = str(exc)
                     warnings.append(

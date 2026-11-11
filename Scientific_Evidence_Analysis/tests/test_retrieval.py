@@ -139,6 +139,90 @@ def test_retrieval_excludes_reference_entries_and_exact_duplicates():
     assert "XGBoost achieved" in results[0].chunk.text
 
 
+def test_retrieval_excludes_reference_headings_and_citation_lists():
+    useful = chunk(
+        "paper-id",
+        "research.pdf",
+        "Results: XGBoost achieved AUC 0.994 on the held-out test data.",
+    )
+    bibliography = chunk(
+        "paper-id",
+        "research.pdf",
+        "References\nSmith et al. (2020). Flood Research. "
+        "https://doi.org/10.0000/example",
+    )
+
+    results = retrieve_evidence(
+        "XGBoost achieved AUC",
+        [bibliography, useful],
+        engine=FixedEngine(),
+    )
+
+    assert [item.chunk.text for item in results] == [useful.text]
+
+
+def test_retrieval_preserves_pdf_name_paper_id_and_page_number():
+    source = EvidenceChunk(
+        "paper-id:9:1",
+        "paper-id",
+        "original-study.pdf",
+        9,
+        "The intervention improved the reported outcome.",
+    )
+
+    results = retrieve_evidence(
+        "intervention improved outcome",
+        [source],
+        engine=FixedEngine(),
+    )
+
+    assert len(results) == 1
+    assert results[0].chunk.paper_name == "original-study.pdf"
+    assert results[0].chunk.paper_id == "paper-id"
+    assert results[0].chunk.page_number == 9
+
+
+def test_retrieval_keeps_relevant_abstract_from_first_page():
+    abstract = EvidenceChunk(
+        "paper-id:1:1",
+        "paper-id",
+        "research.pdf",
+        1,
+        "Abstract: The intervention improved the measured outcome.",
+    )
+
+    results = retrieve_evidence(
+        "intervention improved measured outcome",
+        [abstract],
+        engine=FixedEngine(),
+    )
+
+    assert len(results) == 1
+    assert results[0].chunk.page_number == 1
+    assert "Abstract:" in results[0].chunk.text
+
+
+def test_direct_result_passage_ranks_ahead_of_generic_topic_match():
+    generic = chunk(
+        "1",
+        "generic.pdf",
+        "The intervention was evaluated against the measured outcome.",
+    )
+    direct = chunk(
+        "2",
+        "direct.pdf",
+        "Results showed the intervention improved the measured outcome.",
+    )
+
+    results = retrieve_evidence(
+        "intervention improved measured outcome",
+        [generic, direct],
+        engine=FixedEngine(),
+    )
+
+    assert results[0].chunk.paper_name == "direct.pdf"
+
+
 def test_retrieval_keeps_similar_results_with_different_reported_values():
     chunks = [
         chunk("1", "one.pdf", "XGBoost achieved an AUC score of 0.985."),
